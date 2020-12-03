@@ -63,12 +63,7 @@ def build_semantic_descriptors(sentences):
                 prev.add(currword)
     return d
 
-sentences = [["i", "am", "a", "sick", "man"],
-["i", "am", "a", "spiteful", "man"],
-["i", "am", "an", "unattractive", "man"],
-["i", "believe", "my", "liver", "is", "diseased"],
-["however", "i", "know", "nothing", "at", "all", "about", "my",
-"disease", "and", "do", "not", "know", "for", "certain", "what", "ails", "me"]]
+
 
 #print(build_semantic_descriptors(sentences))
 def build_semantic_descriptors_from_files(filenames):
@@ -97,7 +92,7 @@ def build_semantic_descriptors_from_files(filenames):
     return build_semantic_descriptors(sentences)
 
 
-semantic_descriptors = build_semantic_descriptors_from_files(["book1.txt", "book2.txt"])
+#semantic_descriptors = build_semantic_descriptors_from_files(["book1.txt", "book2.txt"])
 
 
 def most_similar_word(word, choices, semantic_descriptors, similarity_fn):
@@ -135,5 +130,14 @@ def run_similarity_test(filename, semantic_descriptors, similarity_fn):
         total+=1
     return correct/total * 100
         
-print(run_similarity_test("test.txt", semantic_descriptors, cosine_similarity))  
+#print(run_similarity_test("test.txt", semantic_descriptors, cosine_similarity))  
 
+if __name__ == "__main__":
+    sentences = [["i", "am", "a", "sick", "man"],
+["i", "am", "a", "spiteful", "man"],
+["i", "am", "an", "unattractive", "man"],
+["i", "believe", "my", "liver", "is", "diseased"],
+["however", "i", "know", "nothing", "at", "all", "about", "my",
+"disease", "and", "do", "not", "know", "for", "certain", "what", "ails", "me"]]
+    semantic_descriptors = build_semantic_descriptors_from_files(["book1.txt", "book2.txt"])
+    print(run_similarity_test("test.txt", semantic_descriptors, cosine_similarity))
