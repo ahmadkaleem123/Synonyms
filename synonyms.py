@@ -17,7 +17,7 @@ def norm(vec):
     
     return math.sqrt(sum_of_squares)
 
-
+'''
 def cosine_similarity(vec1, vec2):
     dot  = -1
 
@@ -28,7 +28,16 @@ def cosine_similarity(vec1, vec2):
         return -1
     else:
         return ((dot+1)/(norm(vec1)*norm(vec2)))
-    
+'''
+def cosine_similarity(vec1, vec2):
+    dot  = 0
+
+    for key in vec1:
+        if key in vec2:
+            dot+= vec1[key]*vec2[key]
+
+    return ((dot)/(norm(vec1)*norm(vec2)))
+      
 #print(cosine_similarity({"a": 1, "b": 2, "c": 3}, {"b": 4, "c": 5, "d": 6}))
 
 def build_semantic_descriptors(sentences):
@@ -37,30 +46,31 @@ def build_semantic_descriptors(sentences):
         prev = set()
         #prev.update("")
         for j in range(len(sentences[i])):
-            currword = sentences[i][j]
-            if(j == 0):
-                prev.add(currword)
-            else:
+            currword = sentences[i][j]  # CHeck if currword is in prev before proceeding!
+            if currword not in prev:
+                if(j == 0):
+                    prev.add(currword)
+                else:
 
-                for elem in prev:
-                    #print(prev)
-                    #print(elem)
-                    if elem in d:
-                        #d[elem] +=1
-                        if currword in d[elem]:
-                            d[elem][currword] += 1
+                    for elem in prev:
+                        #print(prev)
+                        #print(elem)
+                        if elem in d:
+                            #d[elem] +=1
+                            if currword in d[elem]:
+                                d[elem][currword] += 1
+                            else:
+                                d[elem][currword] = 1
                         else:
-                            d[elem][currword] = 1
-                    else:
-                        d[elem] = {currword : 1}
-                    if currword in d:
-                        if elem in d[currword]:
-                            d[currword][elem] += 1
+                            d[elem] = {currword : 1}
+                        if currword in d:
+                            if elem in d[currword]:
+                                d[currword][elem] += 1
+                            else:
+                                d[currword][elem] = 1
                         else:
-                            d[currword][elem] = 1
-                    else:
-                        d[currword] = {elem: 1}
-                prev.add(currword)
+                            d[currword] = {elem: 1}
+                    prev.add(currword)
     return d
 
 
@@ -87,8 +97,9 @@ def build_semantic_descriptors_from_files(filenames):
             temp[j] = temp[j].split()
             #print(temp[j])
         sentences.extend(temp)
-        sentences.pop(-1)
+        #sentences.pop(-1)
         r.close()
+        #print(sentences)
     return build_semantic_descriptors(sentences)
 
 
@@ -100,7 +111,7 @@ def most_similar_word(word, choices, semantic_descriptors, similarity_fn):
     max_choice = ""
 
     for i in range(len(choices)):
-        if word in semantic_descriptors and choices[i] in semantic_descriptors:
+        if (word in semantic_descriptors) and (choices[i] in semantic_descriptors):
             a = semantic_descriptors[word]
             b = semantic_descriptors[choices[i]]
             curdot = similarity_fn(a,b)
@@ -125,6 +136,7 @@ def run_similarity_test(filename, semantic_descriptors, similarity_fn):
     for j in range(len(f)):
         choices = f[j][2:]
         x = most_similar_word(f[j][0], choices, semantic_descriptors, similarity_fn)
+        #print(x)
         if x == f[j][1]:
             correct += 1
         total+=1
@@ -140,4 +152,9 @@ if __name__ == "__main__":
 ["however", "i", "know", "nothing", "at", "all", "about", "my",
 "disease", "and", "do", "not", "know", "for", "certain", "what", "ails", "me"]]
     semantic_descriptors = build_semantic_descriptors_from_files(["book1.txt", "book2.txt"])
+    #semantic_descriptors = build_semantic_descriptors_from_files(["sample_case.txt"])
+    #print(semantic_descriptors)
     print(run_similarity_test("test.txt", semantic_descriptors, cosine_similarity))
+
+    #derek = {'legislation': {'closer': 3, 'sector': 3, 'section': 1, 'onto': 1}, 'closer': {'legislation': 3, 'sector': 3}, 'sector': {'legislation': 3, 'closer': 3}, 'section': {'legislation': 1, 'onto': 1}, 'onto': {'section': 1, 'legislation': 1}, 'record': {'toe': 1}, 'toe': {'record': 1}}
+    #print(run_similarity_test("sample_test.txt", semantic_descriptors, cosine_similarity))
